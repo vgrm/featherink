@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using featherink.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace featherink
 {
@@ -22,17 +23,27 @@ namespace featherink
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            //var connectionString = Configuration.GetConnectionString("mySQLConnecctionString");
             services.AddControllersWithViews();
 
+            //services.AddDbContext<FeatherInkContext>(opt => opt.UseMySql(connectionString));
             services.AddDbContext<FeatherInkContext>(opt => opt.UseInMemoryDatabase("featherink"));
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            //version EFcore 3..
+            //RegisterDependencies(services);
         }
 
+        /*
+        public void RegisterDependencies(IServiceCollection service)
+        {
+            service.AddSingleton(new FeatherInkContext());
+        }
+        */
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -46,6 +57,9 @@ namespace featherink
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            //var context = app.ApplicationServices.GetService<FeatherInkContext>();
+            //AddTestData(context);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -69,6 +83,32 @@ namespace featherink
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+        }
+
+        private static void AddTestData(FeatherInkContext context)
+        {
+            var user = new User
+            {
+                Id = 1,
+                Role = "admin",
+                Username = "admin",
+                Password = "admin",
+                Email = "admin@email.com",
+                Photo = "adminPIC"
+            };
+            context.User.Add(user);
+
+            var designer = new Designer
+            {
+                Id = 1,
+                Description = "designer page admin",
+                Rating = 10,
+                UserId = 1
+            };
+
+            context.Designer.Add(designer);
+
+            context.SaveChanges();
         }
     }
 }
