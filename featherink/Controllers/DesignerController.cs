@@ -24,65 +24,36 @@ namespace featherink.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Designer>>> GetDesigner()
         {
-            return await _context.Designer.ToListAsync();
+            var item = new Designer();
+            return Ok(item);
         }
 
         // GET: api/Designer/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Designer>> GetDesigner(int id)
         {
-            var designer = await _context.Designer.FindAsync(id);
-
-            if (designer == null)
-            {
-                return NotFound();
-            }
-
-            return designer;
+            var item = new Designer();
+            return Ok(item);
         }
 
         // PUT: api/Designer/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDesigner(int id, Designer designer)
+        public async Task<IActionResult> PutDesigner(int id)
         {
-            if (id != designer.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(designer).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DesignerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var item = new Designer();
+            return Ok("Put item");
         }
 
         // POST: api/Designer
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Designer>> PostDesigner(Designer designer)
+        public async Task<ActionResult<Designer>> PostDesigner()
         {
-            _context.Designer.Add(designer);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDesigner", new { id = designer.Id }, designer);
+            var item = new Designer();
+            return CreatedAtAction("GetDesigner", new { id = item.Id }, item);
         }
 
         // DELETE: api/Designer/5
@@ -92,7 +63,7 @@ namespace featherink.Controllers
             var designer = await _context.Designer.FindAsync(id);
             if (designer == null)
             {
-                return NotFound();
+                return NotFound("designer page with ID not found");
             }
 
             _context.Designer.Remove(designer);

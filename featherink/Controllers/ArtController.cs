@@ -52,14 +52,17 @@ namespace featherink.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> PutArt(int id, Art art)
+        public async Task<IActionResult> PutArt(int id)
         {
-            if (id != art.Id)
+            //return Ok("put Art");
+            var item = new Art();
+
+            if (id != item.Id)
             {
-                return BadRequest();
+                return BadRequest("ID not found");
             }
 
-            _context.Entry(art).State = EntityState.Modified;
+            _context.Entry(item).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +73,8 @@ namespace featherink.Controllers
                     throw;
             }
 
-            return NoContent();
+            return Ok("Put item");
+            
         }
 
         [HttpDelete]
@@ -80,7 +84,7 @@ namespace featherink.Controllers
             var art = await _context.Art.FindAsync(id);
             if (art == null)
             {
-                return NotFound();
+                return NotFound("Id not found delete art");
             }
 
             _context.Art.Remove(art);

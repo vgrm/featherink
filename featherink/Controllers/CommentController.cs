@@ -24,68 +24,36 @@ namespace featherink.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComment()
         {
-            Comment comment = new Comment();
-            //return comment;
-            return await _context.Comment.ToListAsync();
+            var item = new Comment();
+            return Ok(item);
         }
 
         // GET: api/Comments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(int id)
         {
-            var comment = await _context.Comment.FindAsync(id);
-
-            comment = new Comment();
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            return comment;
+            var item = new Comment();
+            return item;
         }
 
         // PUT: api/Comments/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(int id, Comment comment)
+        public async Task<IActionResult> PutComment(int id)
         {
-            if (id != comment.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(comment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var item = new Comment();
+            return Ok("Put item");
         }
 
         // POST: api/Comments
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+        public async Task<ActionResult<Comment>> PostComment()
         {
-            _context.Comment.Add(comment);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
+            var item = new Comment();
+            return CreatedAtAction("GetComment", new { id = item.Id }, item);
         }
 
         // DELETE: api/Comments/5
@@ -95,7 +63,7 @@ namespace featherink.Controllers
             var comment = await _context.Comment.FindAsync(id);
             if (comment == null)
             {
-                return NotFound();
+                return NotFound("comment with ID not found");
             }
 
             _context.Comment.Remove(comment);

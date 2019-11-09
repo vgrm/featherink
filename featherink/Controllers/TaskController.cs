@@ -24,65 +24,36 @@ namespace featherink.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Database.Task>>> GetTask()
         {
-            return await _context.Task.ToListAsync();
+            var item = new Database.Task();
+            return Ok(item);
         }
 
         // GET: api/Task/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Database.Task>> GetTask(int id)
         {
-            var task = await _context.Task.FindAsync(id);
-
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            return task;
+            var item = new Database.Task();
+            return Ok(item);
         }
 
         // PUT: api/Task/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTask(int id, Database.Task task)
+        public async Task<IActionResult> PutTask(int id)
         {
-            if (id != task.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(task).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TaskExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var item = new Database.Task();
+            return Ok("Put item");
         }
 
         // POST: api/Task
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Database.Task>> PostTask(Database.Task task)
+        public async Task<ActionResult<Database.Task>> PostTask()
         {
-            _context.Task.Add(task);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTask", new { id = task.Id }, task);
+            var item = new Database.Task();
+            return CreatedAtAction("GetTask", new { id = item.Id }, item);
         }
 
         // DELETE: api/Task/5
@@ -92,7 +63,7 @@ namespace featherink.Controllers
             var task = await _context.Task.FindAsync(id);
             if (task == null)
             {
-                return NotFound();
+                return NotFound("Task with ID not found");
             }
 
             _context.Task.Remove(task);
