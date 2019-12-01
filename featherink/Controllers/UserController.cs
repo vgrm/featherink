@@ -81,6 +81,7 @@ namespace featherink.Controllers
         public async Task<ActionResult<User>> PostUser()
         {
             var item = new User();
+            _context.User.Add(item);
             return CreatedAtAction("GetUser", new { id = item.Id }, item);
         }
 

@@ -26,8 +26,15 @@ namespace featherink
             //var connectionString = Configuration.GetConnectionString("mySQLConnecctionString");
             services.AddControllersWithViews();
 
+            services.AddDbContext<FeatherInkContext>(options => options.UseSqlServer
+            ("Server=tcp:featherink.database.windows.net,1433;" +
+            "Initial Catalog=featherinkDatabase;Persist Security Info=False;" +
+            "User ID=sqladmin;Password=Admin#123;" +
+            "MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;" +
+            "Connection Timeout=30;"));
+
             //services.AddDbContext<FeatherInkContext>(opt => opt.UseMySql(connectionString));
-            services.AddDbContext<FeatherInkContext>(opt => opt.UseInMemoryDatabase("featherink"));
+            //services.AddDbContext<FeatherInkContext>(opt => opt.UseInMemoryDatabase("featherink"));
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -94,7 +101,7 @@ namespace featherink
                 Username = "admin",
                 Password = "admin",
                 Email = "admin@email.com",
-                Photo = "adminPIC"
+                Picture = "adminPIC"
             };
             context.User.Add(user);
 
