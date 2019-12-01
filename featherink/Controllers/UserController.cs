@@ -24,16 +24,21 @@ namespace featherink.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
-            var item = new User();
-            return Ok(item);
+            return await _context.User.ToListAsync();
         }
 
         // GET: api/User/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var item = new User();
-            return Ok(item);
+            var user = await _context.User.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
         }
 
         // PUT: api/User/5
@@ -78,11 +83,12 @@ namespace featherink.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser()
+        public async Task<ActionResult<User>> PostUser(User user)
         {
-            var item = new User();
-            _context.User.Add(item);
-            return CreatedAtAction("GetUser", new { id = item.Id }, item);
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
         // DELETE: api/User/5
@@ -92,7 +98,7 @@ namespace featherink.Controllers
             var user = await _context.User.FindAsync(id);
             if (user == null)
             {
-                return NotFound("User with ID not found");
+                return NotFound();
             }
 
             _context.User.Remove(user);

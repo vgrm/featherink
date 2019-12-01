@@ -99,7 +99,7 @@ namespace featherink
                 Id = 1,
                 Role = "admin",
                 Username = "admin",
-                Password = "admin",
+                PasswordHash = "admin",
                 Email = "admin@email.com",
                 Picture = "adminPIC"
             };
