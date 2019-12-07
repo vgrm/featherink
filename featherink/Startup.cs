@@ -27,10 +27,14 @@ namespace featherink
             services.AddControllersWithViews();
 
             services.AddDbContext<FeatherInkContext>(options => options.UseSqlServer
-            ("Server=tcp:featherink.database.windows.net,1433;" +
-            "Initial Catalog=featherinkDatabase;Persist Security Info=False;" +
-            "User ID=sqladmin;Password=Admin#123;" +
-            "MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;" +
+            ("Server=tcp:featherinkserver.database.windows.net,1433;" +
+            "Initial Catalog=featherink_db;" +
+            "Persist Security Info=False;" +
+            "User ID=vgrmm;" +
+            "Password=2privatestaticBool;" +
+            "MultipleActiveResultSets=False;" +
+            "Encrypt=True;" +
+            "TrustServerCertificate=False;" +
             "Connection Timeout=30;"));
 
             //services.AddDbContext<FeatherInkContext>(opt => opt.UseMySql(connectionString));
@@ -90,32 +94,6 @@ namespace featherink
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-        }
-
-        private static void AddTestData(FeatherInkContext context)
-        {
-            var user = new User
-            {
-                Id = 1,
-                Role = "admin",
-                Username = "admin",
-                PasswordHash = "admin",
-                Email = "admin@email.com",
-                Picture = "adminPIC"
-            };
-            context.User.Add(user);
-
-            var designer = new Designer
-            {
-                Id = 1,
-                Description = "designer page admin",
-                Rating = 10,
-                UserId = 1
-            };
-
-            context.Designer.Add(designer);
-
-            context.SaveChanges();
         }
     }
 }
