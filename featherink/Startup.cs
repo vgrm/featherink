@@ -40,6 +40,7 @@ namespace featherink
             services.AddCors();
             services.AddControllersWithViews();
 
+
             /*
             services.AddDbContext<FeatherInkContext>(options => options.UseSqlServer
             ("Server=tcp:featherinkserver.database.windows.net,1433;" +
@@ -132,11 +133,13 @@ namespace featherink
             app.UseAuthentication();
             app.UseAuthorization();
 
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+
 
             app.UseEndpoints(endpoints =>
             {
@@ -154,6 +157,7 @@ namespace featherink
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+            
         }
     }
 }

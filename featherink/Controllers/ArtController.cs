@@ -5,6 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using featherink.Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using featherink.Database;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace featherink.Controllers
 {
@@ -14,6 +17,93 @@ namespace featherink.Controllers
     [ApiController]
     public class ArtController : ControllerBase
     {
+
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<Art> _modelRepository;
+
+        public ArtController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+            _modelRepository = _unitOfWork.GetRepository<Art>();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<Art>> Get()
+        {
+            var arts = await _modelRepository.Get(null, new[] { nameof(Art.Designer) });
+
+            return Ok(arts);
+        }
+
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Art>> Get(int id)
+        {
+            var row = await _modelRepository.GetById(id, new[] { nameof(Art.Designer) });
+
+            return row == null ? (ActionResult<Art>)NotFound() : Ok(row);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<Art>> Post([FromBody] Art entity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            await _modelRepository.Create(entity);
+            await _unitOfWork.Save();
+
+            return Ok(entity);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Art>> Put(int id, [FromBody] Art entity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _modelRepository.UpdateById(id, entity);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            await _unitOfWork.Save();
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Art>> Delete(int id)
+        {
+            var userId = HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return BadRequest();
+            }
+
+            var result = await _modelRepository.Delete(id);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            await _unitOfWork.Save();
+
+            return Ok(result);
+        }
+        /*
         private readonly FeatherInkContext _context;
 
         public ArtController(FeatherInkContext context)
@@ -92,6 +182,6 @@ namespace featherink.Controllers
 
             return art;
         }
-
+        */
     }
 }

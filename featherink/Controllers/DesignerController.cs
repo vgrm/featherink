@@ -6,20 +6,96 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using featherink.Database.Entities;
+using featherink.Database;
+using Microsoft.AspNetCore.Authorization;
 
 namespace featherink.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DesignerController : ControllerBase
     {
-        private readonly FeatherInkContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<Designer> _modelRepository;
 
-        public DesignerController(FeatherInkContext context)
+        public DesignerController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _modelRepository = _unitOfWork.GetRepository<Designer>();
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<Designer>> Get()
+        {
+            var models = await _modelRepository.Get(null, new[] { nameof(Designer.User) });
+
+            return Ok(models);
+        }
+
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Designer>> Get(int id)
+        {
+            var row = await _modelRepository.GetById(id, new[] { nameof(Designer.User) });
+
+            return row == null ? (ActionResult<Designer>)NotFound() : Ok(row);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<Designer>> Post([FromBody] Designer entity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            await _modelRepository.Create(entity);
+            await _unitOfWork.Save();
+
+            return Ok(entity);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Designer>> Put(int id, [FromBody] Designer entity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _modelRepository.UpdateById(id, entity);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            await _unitOfWork.Save();
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Designer>> Delete(int id)
+        {
+            var result = await _modelRepository.Delete(id);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            await _unitOfWork.Save();
+
+            return Ok(result);
+        }
+
+        /*
         // GET: api/Designer
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Designer>>> GetDesigner()
@@ -76,5 +152,6 @@ namespace featherink.Controllers
         {
             return _context.Designer.Any(e => e.Id == id);
         }
+        */
     }
 }

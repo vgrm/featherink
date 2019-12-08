@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using featherink.Database.Entities;
+using Microsoft.AspNetCore.Authorization;
+using featherink.Database;
 
 namespace featherink.Controllers
 {
@@ -13,6 +15,86 @@ namespace featherink.Controllers
     [ApiController]
     public class TaskController : ControllerBase
     {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<Database.Entities.Task> _modelRepository;
+
+        public TaskController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+            _modelRepository = _unitOfWork.GetRepository<Database.Entities.Task>();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<Database.Entities.Task>> Get()
+        {
+            var models = await _modelRepository.Get(null, new[] { nameof(Database.Entities.Task.Designer) });
+
+            return Ok(models);
+        }
+
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Database.Entities.Task>> Get(int id)
+        {
+            var row = await _modelRepository.GetById(id, new[] { nameof(Database.Entities.Task.Designer) });
+
+            return row == null ? (ActionResult<Database.Entities.Task>)NotFound() : Ok(row);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<Database.Entities.Task>> Post([FromBody] Database.Entities.Task entity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            await _modelRepository.Create(entity);
+            await _unitOfWork.Save();
+
+            return Ok(entity);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Database.Entities.Task>> Put(int id, [FromBody] Database.Entities.Task entity)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _modelRepository.UpdateById(id, entity);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            await _unitOfWork.Save();
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Database.Entities.Task>> Delete(int id)
+        {
+            var result = await _modelRepository.Delete(id);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            await _unitOfWork.Save();
+
+            return Ok(result);
+        }
+
+        /*
         private readonly FeatherInkContext _context;
 
         public TaskController(FeatherInkContext context)
@@ -76,5 +158,6 @@ namespace featherink.Controllers
         {
             return _context.Task.Any(e => e.Id == id);
         }
+        */
     }
 }

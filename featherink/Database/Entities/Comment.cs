@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace featherink.Database.Entities
 {
-    public class Comment
+    public class Comment : Entity
     {
 
         public Comment()
@@ -13,13 +13,14 @@ namespace featherink.Database.Entities
 
         }
 
-        public int Id { get; set; }
         public int Rating { get; set; }
         public string Text { get; set; }
         public int UserId { get; set; }
-        public int DesignerId { get; set; }
+        public int ArtId { get; set; }
 
-        //public virtual Designer Designer { get; set; }
+        public virtual Art Art { get; set; }
+
+        public virtual User User { get; set; }
 
     }
 }
