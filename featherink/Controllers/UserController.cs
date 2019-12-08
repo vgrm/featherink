@@ -36,6 +36,7 @@ namespace featherink.Controllers
         {
             var userId = HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
 
+            
             if (userId == null)
             {
                 return BadRequest();

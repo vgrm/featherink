@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using featherink.Database.Entities;
 using featherink.Database;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace featherink.Controllers
 {
@@ -83,6 +84,20 @@ namespace featherink.Controllers
         [Authorize]
         public async Task<ActionResult<Designer>> Delete(int id)
         {
+
+            //check if the user has claims
+            var userId = HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier);
+
+            var temp = userId.Value;
+
+            var row = await _modelRepository.GetById(id, new[] { nameof(Designer.User) });
+
+            if (row.UserId.ToString() != temp)
+            {
+                return Unauthorized();
+            }
+            //
+
             var result = await _modelRepository.Delete(id);
 
             if (result == null)
