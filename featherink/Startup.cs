@@ -25,6 +25,7 @@ namespace featherink
     public class Startup
     {
         private readonly IConfiguration _configuration;
+        private readonly string _specificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -37,23 +38,23 @@ namespace featherink
         {
 
             //var connectionString = Configuration.GetConnectionString("mySQLConnecctionString");
-            services.AddCors();
-            services.AddControllersWithViews();
+            //services.AddCors();
+            //services.AddControllersWithViews();
 
 
-            /*
-            services.AddDbContext<FeatherInkContext>(options => options.UseSqlServer
-            ("Server=tcp:featherinkserver.database.windows.net,1433;" +
-            "Initial Catalog=featherink_db;" +
-            "Persist Security Info=False;" +
-            "User ID=vgrmm;" +
-            "Password=2privatestaticBool;" +
-            "MultipleActiveResultSets=False;" +
-            "Encrypt=True;" +
-            "TrustServerCertificate=False;" +
-            "Connection Timeout=30;"));
-            */
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddCors(options =>
+            {
+                options.AddPolicy(_specificOrigins,
+                    builder => { builder.WithOrigins("http://78.62.192.217", "http://localhost:3000").AllowAnyHeader().AllowAnyMethod(); });
+            });
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = document => { document.Info.Title = "FeatherInk API"; };
+            });
+
             services.AddAutoMapper(typeof(MappingProfile));
 
             // configure strongly typed settings objects
@@ -86,11 +87,12 @@ namespace featherink
             //services.AddDbContext<FeatherInkContext>(opt => opt.UseMySql(connectionString));
             //services.AddDbContext<FeatherInkContext>(opt => opt.UseInMemoryDatabase("featherink"));
             // In production, the React files will be served from this directory
+            /*
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
-
+            */
             //version EFcore 3..
             RegisterDependencies(services);
         }
@@ -116,7 +118,7 @@ namespace featherink
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                //app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -125,11 +127,21 @@ namespace featherink
             //AddTestData(context);
 
             // global cors policy
+            /*
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
+                */
+            app.UseCors(_specificOrigins);
 
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
+
+            app.UseAuthentication();
+            app.UseMvc();
+
+            /*
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -157,7 +169,7 @@ namespace featherink
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-            
+            */
         }
     }
 }
