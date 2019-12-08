@@ -1,5 +1,6 @@
 ﻿using featherink.Database;
 using featherink.Database.Entities;
+using featherink.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -18,6 +19,15 @@ namespace featherink.Services
         private readonly IRepository<User> _userRepository;
         private readonly IConfiguration _configuration;
         private readonly ICryptographicService _cryptographicService;
+
+        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration,
+            ICryptographicService cryptographicService)
+        {
+            _unitOfWork = unitOfWork;
+            _configuration = configuration;
+            _cryptographicService = cryptographicService;
+            _userRepository = unitOfWork.GetRepository<User>();
+        }
 
         public async Task<string> AuthenticateAsync(string username, string password)
         {
@@ -70,7 +80,8 @@ namespace featherink.Services
             {
                 Username = username,
                 PasswordSalt = salt,
-                PasswordHash = hash
+                PasswordHash = hash,
+                Role = "user"
             };
 
             await _userRepository.Create(userData);
@@ -102,13 +113,22 @@ namespace featherink.Services
                 throw new ArgumentException();
             }
 
-            var secret = _configuration["JWTSecret"];
+            // configure strongly typed settings objects
+            var appSettingsSection = _configuration.GetSection("AppSettings");
+            //services.Configure<AppSettings>(appSettingsSection);
+
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+
+            //var secret = _configuration["JWTSecret"];
+            var secret = appSettings.Secret;
             if (secret == null)
             {
                 throw new ConfigurationMissingException();
             }
 
             var key = Encoding.ASCII.GetBytes(secret);
+            //var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             var symmetricSecurityKey = new SymmetricSecurityKey(key);
 
             var claims = CreateClaims(userId);

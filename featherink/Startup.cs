@@ -12,6 +12,13 @@ using Microsoft.Extensions.Logging;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using featherink.Helpers;
+using featherink.Database;
+using featherink.Services;
+using System.Security.Cryptography;
+using AutoMapper;
+using featherink.Configuration;
+using Microsoft.Extensions.DependencyInjection.Abstractions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace featherink
 {
@@ -45,6 +52,8 @@ namespace featherink
             "TrustServerCertificate=False;" +
             "Connection Timeout=30;"));
             */
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddAutoMapper(typeof(MappingProfile));
 
             // configure strongly typed settings objects
             var appSettingsSection = _configuration.GetSection("AppSettings");
@@ -88,6 +97,12 @@ namespace featherink
         public void RegisterDependencies(IServiceCollection services)
         {
             services.AddSingleton<FeatherInkContext>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddTransient<RNGCryptoServiceProvider>();
+            services.AddTransient<ICryptographicService, CryptographicService>();
             //service.AddSingleton(new FeatherInkContext());
         }
         
