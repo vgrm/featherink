@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace featherink.Database
+namespace featherink.Database.Entities
 {
     public class User
     {
@@ -16,6 +16,7 @@ namespace featherink.Database
         public string Role { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
+        public string PasswordSalt { get; set; }
         public string Email { get; set; }
         public string Picture { get; set; }
         

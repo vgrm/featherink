@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using featherink.Database;
+using featherink.Database.Entities;
 
 namespace featherink.Controllers
 {
@@ -22,17 +22,17 @@ namespace featherink.Controllers
 
         // GET: api/Task
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Database.Task>>> GetTask()
+        public async Task<ActionResult<IEnumerable<Database.Entities.Task>>> GetTask()
         {
-            var item = new Database.Task();
+            var item = new Database.Entities.Task();
             return Ok(item);
         }
 
         // GET: api/Task/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Database.Task>> GetTask(int id)
+        public async Task<ActionResult<Database.Entities.Task>> GetTask(int id)
         {
-            var item = new Database.Task();
+            var item = new Database.Entities.Task();
             return Ok(item);
         }
 
@@ -42,7 +42,7 @@ namespace featherink.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTask(int id)
         {
-            var item = new Database.Task();
+            var item = new Database.Entities.Task();
             return Ok("Put item");
         }
 
@@ -50,15 +50,15 @@ namespace featherink.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Database.Task>> PostTask()
+        public async Task<ActionResult<Database.Entities.Task>> PostTask()
         {
-            var item = new Database.Task();
+            var item = new Database.Entities.Task();
             return CreatedAtAction("GetTask", new { id = item.Id }, item);
         }
 
         // DELETE: api/Task/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Database.Task>> DeleteTask(int id)
+        public async Task<ActionResult<Database.Entities.Task>> DeleteTask(int id)
         {
             var task = await _context.Task.FindAsync(id);
             if (task == null)

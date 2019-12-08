@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using featherink.Database;
+using featherink.Database.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace featherink.Controllers
 {
@@ -22,6 +23,7 @@ namespace featherink.Controllers
 
         // GET: api/User
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
             return await _context.User.ToListAsync();

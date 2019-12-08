@@ -2,20 +2,25 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using featherink.Database;
+using featherink.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using featherink.Helpers;
 
 namespace featherink
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -23,9 +28,12 @@ namespace featherink
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             //var connectionString = Configuration.GetConnectionString("mySQLConnecctionString");
+            services.AddCors();
             services.AddControllersWithViews();
 
+            /*
             services.AddDbContext<FeatherInkContext>(options => options.UseSqlServer
             ("Server=tcp:featherinkserver.database.windows.net,1433;" +
             "Initial Catalog=featherink_db;" +
@@ -36,6 +44,34 @@ namespace featherink
             "Encrypt=True;" +
             "TrustServerCertificate=False;" +
             "Connection Timeout=30;"));
+            */
+
+            // configure strongly typed settings objects
+            var appSettingsSection = _configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true
+                };
+            });
 
             //services.AddDbContext<FeatherInkContext>(opt => opt.UseMySql(connectionString));
             //services.AddDbContext<FeatherInkContext>(opt => opt.UseInMemoryDatabase("featherink"));
@@ -46,15 +82,15 @@ namespace featherink
             });
 
             //version EFcore 3..
-            //RegisterDependencies(services);
+            RegisterDependencies(services);
         }
 
-        /*
-        public void RegisterDependencies(IServiceCollection service)
+        public void RegisterDependencies(IServiceCollection services)
         {
-            service.AddSingleton(new FeatherInkContext());
+            services.AddSingleton<FeatherInkContext>();
+            //service.AddSingleton(new FeatherInkContext());
         }
-        */
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -71,6 +107,15 @@ namespace featherink
 
             //var context = app.ApplicationServices.GetService<FeatherInkContext>();
             //AddTestData(context);
+
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
