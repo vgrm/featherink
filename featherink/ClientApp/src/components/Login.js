@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 
+import styled from 'styled-components'
+
 function ForgotPasswordCard() {
     return (
         <Card>
@@ -41,8 +43,8 @@ function LogInCard({ onLoginFormSubmit }) {
             <Card.Body>
                 <Form onSubmit={onLoginFormSubmit}>
                     <Form.Group>
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control type="email" placeholder="Email" />
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control type="username" placeholder="Username" />
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Password</Form.Label>
@@ -70,7 +72,7 @@ function GoToRegisterPageCard() {
                     <label>Use this link to sign up</label>
                 </div>
                 <div className="form-group">
-                    <Link to="/signup">To sign up page</Link>
+                    <Link to="/registration">To sign up page</Link>
                 </div>
             </Card.Body>
         </Card>

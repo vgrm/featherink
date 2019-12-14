@@ -25,7 +25,6 @@ namespace featherink
     public class Startup
     {
         private readonly IConfiguration _configuration;
-        private readonly string _specificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -38,22 +37,8 @@ namespace featherink
         {
 
             //var connectionString = Configuration.GetConnectionString("mySQLConnecctionString");
-            //services.AddCors();
-            //services.AddControllersWithViews();
-
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy(_specificOrigins,
-                    builder => { builder.WithOrigins("http://78.62.192.217", "http://localhost:3000").AllowAnyHeader().AllowAnyMethod(); });
-            });
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddMvc(option => option.EnableEndpointRouting = false);
-            services.AddSwaggerDocument(config =>
-            {
-                config.PostProcess = document => { document.Info.Title = "FeatherInk API"; };
-            });
+            services.AddCors();
+            services.AddControllersWithViews();
 
             services.AddAutoMapper(typeof(MappingProfile));
 
@@ -84,16 +69,6 @@ namespace featherink
                 };
             });
 
-            //services.AddDbContext<FeatherInkContext>(opt => opt.UseMySql(connectionString));
-            //services.AddDbContext<FeatherInkContext>(opt => opt.UseInMemoryDatabase("featherink"));
-            // In production, the React files will be served from this directory
-            /*
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
-            */
-            //version EFcore 3..
             RegisterDependencies(services);
         }
 
@@ -106,7 +81,6 @@ namespace featherink
 
             services.AddTransient<RNGCryptoServiceProvider>();
             services.AddTransient<ICryptographicService, CryptographicService>();
-            //service.AddSingleton(new FeatherInkContext());
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -123,35 +97,21 @@ namespace featherink
                 app.UseHsts();
             }
 
-            //var context = app.ApplicationServices.GetService<FeatherInkContext>();
-            //AddTestData(context);
-
             // global cors policy
-            /*
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-                */
-            app.UseCors(_specificOrigins);
 
             app.UseOpenApi();
-            app.UseSwaggerUi3();
 
-            app.UseAuthentication();
-            app.UseMvc();
-
-            /*
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -169,7 +129,7 @@ namespace featherink
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-            */
+            
         }
     }
 }
