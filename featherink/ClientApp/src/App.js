@@ -7,7 +7,7 @@ import { Counter } from './components/Counter';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import { Register } from './components/Register';
-
+import { Designer } from './components/Designer';
 import './custom.css'
 
 export default class App extends Component {
@@ -22,6 +22,7 @@ export default class App extends Component {
                 <Route path='/login' component={Login} />
                 <Route path='/signup' component={Signup} />
                 <Route path='/register' component={Register} />
+                <Route path='/designers' component={Designer} />
             </Layout>
         );
     }
