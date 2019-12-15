@@ -7,7 +7,11 @@ import { FetchData } from './FetchData';
 import Login from './Login';
 import Signup from './Signup';
 import { Register } from './Register';
+import Designers from './Designers';
 import Designer from './Designer';
+
+import Tasks from './Tasks';
+import TaskNew from './TaskNew';
 
 function Body() {
     return (
@@ -17,7 +21,10 @@ function Body() {
             <Route path='/login' component={Login} />
             <Route path='/signup' component={Signup} />
             <Route path='/register' component={Register} />
-            <Route path='/designers' component={Designer} />
+            <Route path='/designers' component={Designers} />
+            <Route path='/designer/:designerId([0-9]+)' component={Designer} />
+            <Route path='/tasks' component={Tasks} />
+            <Route path='/newtask' component={TaskNew} />
         </Container>
     );
 }

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -13,6 +13,20 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import Container from '@material-ui/core/Container';
+
+
+import colors from "../Constants/colors";
+
+const ColorButton = withStyles(theme => ({
+    root: {
+        color: colors.white,
+        backgroundColor: colors.primaryColor,
+        '&:hover': {
+            backgroundColor: colors.primaryColorDark,
+        },
+    },
+}))(Button);
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -20,134 +34,105 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(2)
     },
     card: {
-        maxWidth: 345,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    cardMedia: {
+        paddingTop: '56.25%', // 16:9
     },
     media: {
         height: 140,
     },
+    heroContent: {
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(8, 0, 6),
+    },
+    heroButtons: {
+        marginTop: theme.spacing(4),
+    },
+
 }));
 
-function NewDesignerCard({ designers }) {
-    NewDesignerCard.propTypes = {
-        designers: PropTypes.array
+function ArtGrid({arts }) {
+    ArtGrid.propTypes = {
+        arts: PropTypes.array
+    };
+
+    const classes = useStyles();
+
+    return (
+        <Container className={classes.cardGrid} maxWidth="md">
+            {/* End hero unit */}
+            <Grid container spacing={4}>
+                {arts.map(art => (
+                    <Grid item key={art.id} xs={12} sm={6} md={4}>
+                        <Card className={classes.card}>
+                            <CardMedia
+                                className={classes.cardMedia}
+                                image={art.image}
+                                title={art.name + "_Image"}
+                            />
+                            <CardContent className={classes.cardContent}>
+                                <Typography gutterBottom variant="h5" component="h2">
+                                    {art.name}
+                    </Typography>
+                                <Typography variant="caption" display="block" gutterBottom>
+                                    {art.description}
+                    </Typography>
+                            </CardContent>
+                            <CardActions>
+                                <Button size="small" color="primary">
+                                    View
+                    </Button>
+                                <Button size="small" color="primary">
+                                    Edit
+                    </Button>
+                            </CardActions>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+        </Container>
+        );
+
+}
+function DesignerPage({ designer }) {
+    DesignerPage.propTypes = {
+        designer: PropTypes.object
     };
 
     const classes = useStyles();
 
     return (
         <div>
-            <Grid
-                container
-                spacing={2}
-                direction="row"
-                justify="flex-start"
-                alignItems="flex-start"
-            >
-                {designers.map(designer => (
-                    <Grid item xs={12} sm={6} md={3} key={designer.id}>
-                <Card className={classes.card}>
-                    <CardActionArea>
-                        <CardMedia
-                                    className={classes.media}
-                                    image={designer.image}
-                                    title={designer.name + "_Image"}
-                        />
-                        <CardContent>
-                            <Typography gutterBottom variant="h5" component="h2">
-                                        {designer.name}
-          </Typography>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                        {designer.description}
-          </Typography>
-                        </CardContent>
-                    </CardActionArea>
-                    <CardActions>
-                        <Button size="small" color="primary">
-                            Share
-        </Button>
-                        <Button size="small" color="primary">
-                            Learn More
-        </Button>
-                    </CardActions>
-                        </Card>
-                    </Grid>
-            ))};
-</Grid>    
+            <div className={classes.heroContent}>
+                <Container maxWidth="sm">
+                    <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+                        {designer.name}
+                    </Typography>
+                    <Typography variant="h5" align="center" color="textSecondary" paragraph>
+                        {designer.description}
+                    </Typography>
+                    <div className={classes.heroButtons}>
+                        <Grid container spacing={2} justify="center">
+                            <Grid item>
+                                <ColorButton variant="contained" color="primary">
+                                    Order
+                  </ColorButton>
+                            </Grid>
+                            <Grid item>
+                                <ColorButton variant="outlined" color="primary">
+                                    Upload art
+                  </ColorButton>
+                            </Grid>
+                        </Grid>
+                    </div>
+                </Container>
+            </div>           
+
         </div>
     );
-
-    /*
-    return (
-        <div>
-            {designers.map(designer => (
-                <Card className={classes.card}>
-                    <CardActionArea>
-                        <CardMedia
-                            className={classes.media}
-                            image="/static/images/cards/contemplative-reptile.jpg"
-                            title="Contemplative Reptile"
-                        />
-                        <CardContent>
-                            <Typography gutterBottom variant="h5" component="h2">
-                                Lizard
-          </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                                across all continents except Antarctica
-          </Typography>
-                        </CardContent>
-                    </CardActionArea>
-                    <CardActions>
-                        <Button size="small" color="primary">
-                            Share
-        </Button>
-                        <Button size="small" color="primary">
-                            Learn More
-        </Button>
-                    </CardActions>
-                </Card>
-            ))};
-        </div>
-    );
-
-    */
-    /*
-    return (
-        <div>
-            {designers.map(designer => (
-                <Card key={designer.id}>
-                    <Image src={designer.image} />
-                    <Link to={`/designer/${designer.id}`}> {designer.name} </Link>
-                    {designer.description}
-                </Card>
-            ))};
-        </div>
-    );
-    */
-
-    /*
-    return (
-        <Card>
-            <Card.Header>
-                New designers
-            </Card.Header>
-            <ListGroup className="list-group-flush">
-                {designers.map(designer => (
-                    <ListGroupItem key={designer.id}>
-                        <div>
-                            <Image src={designer.image} />
-                            <Link to={`/designer/${designer.id}`}> {designer.name} </Link>
-                        </div>
-                        <div>
-                            {designer.description}
-                        </div>
-                        
-                    </ListGroupItem>
-                ))}
-            </ListGroup>
-        </Card>
-    ); 
-    */
 }
 
 class Designer extends React.Component {
@@ -155,30 +140,68 @@ class Designer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            designers: []
+            designerId: this.props.match.params.designerId,
+            designer: { arts: [] },
+            arts: []
         };
 
-        fetch('api/designer')
+        Designer.propTypes = {
+            designerId: PropTypes.number,
+            designer: PropTypes.object,
+            arts: PropTypes.array,
+            match: PropTypes.object
+        };
+    }
+    componentDidMount() {
+        fetch(`api/designer/${this.state.designerId}`)
             .then(res => res.json())
             .then(
                 (result) => {
                     this.setState({
-                        designers: result
+                        designer: result,
+                        error: result.error
                     });
-                });
+                },
+                (error) => {
+                    this.setState({
+                        error: error
+                    });
+                }
+        );
+
+        fetch(`api/art`)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        arts: result.filter(x => x.designerId == this.state.designerId)
+                    });
+                }
+        );
+
     }
 
 
     render() {
         return (
             <div>
-                <h1>Hello, world! FeatherInk L2</h1>
                 <Row>
                     <Col>
 
                         <Row>
                             <Col>
-                                <NewDesignerCard {...this.state} />
+                                <DesignerPage {...this.state} />
+                            </Col>
+                        </Row>
+                    </Col>
+
+                </Row>
+                <Row>
+                    <Col>
+
+                        <Row>
+                            <Col>
+                                <ArtGrid arts={this.state.arts} />
                             </Col>
                         </Row>
                     </Col>

@@ -5,6 +5,8 @@ import ReactDOM from "react-dom";
 import registerServiceWorker from "./registerServiceWorker";
 import { BrowserRouter } from "react-router-dom";
 import NavigationMenu from "./components/NavigationMenu";
+import NavMenu from "./components/NavMenu";
+
 import Body from "./components/Body";
 import * as Redux from "redux";
 import { Provider } from "react-redux";
@@ -27,7 +29,7 @@ const store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && 
 function App() {
     return (
         <div>
-            <NavigationMenu />
+            <NavMenu />
             <Body />
         </div>
     );
