@@ -43,7 +43,7 @@ namespace featherink.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<Database.Entities.Task>> Post([FromBody] Database.Entities.Task entity)
         {
             if (!ModelState.IsValid)
@@ -79,7 +79,7 @@ namespace featherink.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<Database.Entities.Task>> Delete(int id)
         {
             var result = await _modelRepository.Delete(id);

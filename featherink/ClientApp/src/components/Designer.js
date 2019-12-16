@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { Row, Col, ListGroup, ListGroupItem, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 
@@ -14,7 +14,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
-
+import Link from '@material-ui/core/Link';
 
 import colors from "../Constants/colors";
 
@@ -117,9 +117,11 @@ function DesignerPage({ designer }) {
                     <div className={classes.heroButtons}>
                         <Grid container spacing={2} justify="center">
                             <Grid item>
-                                <ColorButton variant="contained" color="primary">
-                                    Order
+                                <Link href="/tasknew" variant="body2" color="inherit">
+                                    <ColorButton variant="contained" color="primary">
+                                        Order
                   </ColorButton>
+              </Link>
                             </Grid>
                             <Grid item>
                                 <ColorButton variant="outlined" color="primary">

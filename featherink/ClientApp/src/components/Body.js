@@ -13,6 +13,8 @@ import Designer from './Designer';
 import Tasks from './Tasks';
 import TaskNew from './TaskNew';
 
+import ArtUpload from './ArtUpload';
+
 function Body() {
     return (
         <Container fluid="true">
@@ -24,7 +26,8 @@ function Body() {
             <Route path='/designers' component={Designers} />
             <Route path='/designer/:designerId([0-9]+)' component={Designer} />
             <Route path='/tasks' component={Tasks} />
-            <Route path='/newtask' component={TaskNew} />
+            <Route path='/tasknew' component={TaskNew} />
+            <Route path='/artupload' component={ArtUpload} />
         </Container>
     );
 }

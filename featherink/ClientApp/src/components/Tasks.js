@@ -75,9 +75,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function TaskCard({ tasks }) {
+function TaskCard(props) {
     TaskCard.propTypes = {
-        tasks: PropTypes.array
+        tasks: PropTypes.array,
+        handleCloseDelete: PropTypes.func
     };
 
     const classes = useStyles();
@@ -92,6 +93,10 @@ function TaskCard({ tasks }) {
         setOpen(false);
     };
 
+    function handleClick() {
+        setOpen(true);
+    }
+
 
 
     return (
@@ -103,7 +108,7 @@ function TaskCard({ tasks }) {
                 justify="flex-start"
                 alignItems="flex-start"
             >
-                {tasks.map(task => (
+                {props.tasks.map(task => (
                     <Grid item xs={12} sm={6} md={3} key={task.id}>
                         <Card className={classes.card}>
 
@@ -121,7 +126,7 @@ function TaskCard({ tasks }) {
                                 <ColorButton size="small" color="primary">
                                     Accept
         </ColorButton>
-                                <ColorButtonSecondary size="small" color="secondary" onClick={handleClickOpen}>
+                                <ColorButtonSecondary size="small" color="secondary" onClick={() => props.handleCloseDelete(task.id)}>
                                     Cancel
         </ColorButtonSecondary>
                             </CardActions>
@@ -145,7 +150,7 @@ function TaskCard({ tasks }) {
                                 <Button onClick={handleClose} color="primary">
                                     Disagree
           </Button>
-                                <Button onClick={handleClose} color="primary">
+                                <Button onClick={() => { props.handleCloseDelete(props.taskId); handleClose(); }} color="primary">
                                     Agree
           </Button>
                             </DialogActions>
@@ -167,7 +172,8 @@ class Tasks extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tasks: []
+            tasks: [],
+            taskId: 0
         };
 
         fetch('api/task')
@@ -182,11 +188,26 @@ class Tasks extends React.Component {
         //this.deleteTask = this.deleteTask.bind(this);
     }
 
-    //this.deleteTask = this.deleteTask.bind(this);
+   //this.deleteTask = this.deleteTask.bind(this);
 
+    
+    handleCloseDelete = async (id) => {
+
+        fetch('api/task/' + id, { method: 'delete' })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        tasks: this.state.tasks.filter(x => x.id != result.id)
+                    });
+                })
+    };
+    
+
+    /*
     handleCloseDelete = (id) => {
 
-        fetch(`api/task` + 9, { method: 'delete' })
+        fetch('api/task/'+id, { method: 'delete' })
             .then(res => res.json())
             .then(
                 (result) => {
@@ -195,7 +216,7 @@ class Tasks extends React.Component {
                     });
                 });
     };
-
+    */
     render() {
         return (
             <div>
@@ -205,7 +226,10 @@ class Tasks extends React.Component {
 
                         <Row>
                             <Col>
-                                <TaskCard {...this.state} />
+                                <TaskCard
+                                    {...this.state}
+                                    handleCloseDelete={this.handleCloseDelete}
+                                />
                             </Col>
                         </Row>
                     </Col>
