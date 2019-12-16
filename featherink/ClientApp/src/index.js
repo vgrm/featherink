@@ -8,6 +8,7 @@ import NavigationMenu from "./components/NavigationMenu";
 import NavMenu from "./components/NavMenu";
 
 import Body from "./components/Body";
+import Footer from "./blocks/Footer";
 import * as Redux from "redux";
 import { Provider } from "react-redux";
 
@@ -31,6 +32,7 @@ function App() {
         <div>
             <NavMenu />
             <Body />
+            <Footer />
         </div>
     );
 }

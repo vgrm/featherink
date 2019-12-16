@@ -194,7 +194,7 @@ class TaskNew extends React.Component {
                     name: this.state.name,
                     description: this.state.description,
                     userId: this.state.userId,
-                    designerId: this.state.description
+                    designerId: this.state.designerId
                 }),
                 headers: {
                     "Accept": "application/json",
