@@ -123,7 +123,7 @@ function TaskCard(props) {
                                 </CardContent>
                             </CardActionArea>
                             <CardActions>
-                                <ColorButton size="small" color="primary">
+                                <ColorButton size="small" color="primary" onClick={handleClickOpen}>
                                     Accept
         </ColorButton>
                                 <ColorButtonSecondary size="small" color="secondary" onClick={() => props.handleCloseDelete(task.id)}>
